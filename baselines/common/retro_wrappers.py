@@ -5,6 +5,9 @@ from .atari_wrappers import WarpFrame, ClipRewardEnv, FrameStack, ScaledFloatFra
 from .wrappers import TimeLimit
 import numpy as np
 import gym
+from nes_py.wrappers import JoypadSpace
+import gym_super_mario_bros
+from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
 
 
 class StochasticFrameSkip(gym.Wrapper):
@@ -200,10 +203,15 @@ class StartDoingRandomActionsWrapper(gym.Wrapper):
         return self.last_obs, rew, done, info
 
 def make_retro(*, game, state=None, max_episode_steps=4500, **kwargs):
-    import retro
-    if state is None:
-        state = retro.State.DEFAULT
-    env = retro.make(game, state, **kwargs)
+    env = None
+    if "SuperMarioBros" in game:
+        env = gym_super_mario_bros.make(game)
+        env = JoypadSpace(env, SIMPLE_MOVEMENT)
+    else:
+        import retro
+        if state is None:
+            state = retro.State.DEFAULT
+        env = retro.make(game, state, **kwargs)
     env = StochasticFrameSkip(env, n=4, stickprob=0.25)
     if max_episode_steps is not None:
         env = TimeLimit(env, max_episode_steps=max_episode_steps)
