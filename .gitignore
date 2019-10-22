@@ -34,4 +34,4 @@ src
 .cache
 
 MUJOCO_LOG.TXT
-trained_models/
+
