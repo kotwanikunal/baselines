@@ -7,6 +7,7 @@ from gym import spaces
 import cv2
 cv2.ocl.setUseOpenCL(False)
 from .wrappers import TimeLimit
+from .ob_detection.template_matching import *
 
 
 class NoopResetEnv(gym.Wrapper):
@@ -140,6 +141,7 @@ class WarpFrame(gym.ObservationWrapper):
         observation should be warped.
         """
         super().__init__(env)
+        self.tm = TemplateMatching()
         self._width = width
         self._height = height
         self._grayscale = grayscale
@@ -168,6 +170,8 @@ class WarpFrame(gym.ObservationWrapper):
             frame = obs
         else:
             frame = obs[self._key]
+
+        frame = self.tm.match_templates(frame,True)
 
         if self._grayscale:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
