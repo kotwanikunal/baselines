@@ -32,7 +32,7 @@ class TemplateMatching:
         '''
 
         img_rgb = cv2.imread('images/frame1.png') if frame is None else frame
-        self.save_img(img_rgb, file_name='org')
+        # self.save_img(img_rgb, file_name='org')
         #Dont modify frame inplace
         # print(img_rgb.shape)
         img_rgb = img_rgb.copy() 
@@ -58,7 +58,7 @@ class TemplateMatching:
             w,h = self.template_dims[name]
             for pt in zip(*loc[::-1]):
                 cv2.rectangle(img_final, pt, (pt[0] + w, pt[1] + h), colors[name], fill)
-        self.save_img(img_final, file_name='res1')
+        # self.save_img(img_final, file_name='res1')
         return img_final
 
     # def save_img(self, img, file_name='res'):
