@@ -61,6 +61,6 @@ class TemplateMatching:
         self.save_img(img_final, file_name='res1')
         return img_final
 
-    def save_img(self, img, file_name='res'):
-        print(file_name)
-        cv2.imwrite(f'/home/kunal/images/{file_name}.png',cv2.UMat(img))
+    # def save_img(self, img, file_name='res'):
+    #     print(file_name)
+    #     cv2.imwrite(f'/home/kunal/images/{file_name}.png',cv2.UMat(img))
