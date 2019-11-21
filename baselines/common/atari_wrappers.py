@@ -8,6 +8,7 @@ import cv2
 cv2.ocl.setUseOpenCL(False)
 from .wrappers import TimeLimit
 from .ob_detection.template_matching import *
+from skvideo.io import FFmpegWriter
 
 
 class NoopResetEnv(gym.Wrapper):
@@ -142,6 +143,10 @@ class WarpFrame(gym.ObservationWrapper):
         """
         super().__init__(env)
         self.tm = TemplateMatching()
+
+        self.ob_frames = []
+        self.frame_count = 0
+
         self._width = width
         self._height = height
         self._grayscale = grayscale
@@ -171,7 +176,9 @@ class WarpFrame(gym.ObservationWrapper):
         else:
             frame = obs[self._key]
 
-        frame = self.tm.match_templates(frame,True)
+        # res_image = self.tm.match_templates(frame,True)
+        # self.ob_frames.append(np.concatenate((frame, res_image), axis=0))
+        # frame = res_image
 
         if self._grayscale:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
@@ -180,6 +187,11 @@ class WarpFrame(gym.ObservationWrapper):
         )
         if self._grayscale:
             frame = np.expand_dims(frame, -1)
+
+        # self.frame_count += 1
+        # if self.frame_count % 1000 == 0:
+        #     save_video(self.ob_frames,"OBFrames"+str(self.frame_count))
+        #     self.ob_frames = []
 
         if self._key is None:
             obs = frame
@@ -292,3 +304,18 @@ def wrap_deepmind(env, episode_life=True, clip_rewards=True, frame_stack=False, 
         env = FrameStack(env, 4)
     return env
 
+def save_video(img_array, file_name):
+    fps = 12
+    height, width, layers = img_array[0].shape
+    size = (width, height)
+    fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+    # fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    # fourcc = cv2.cv.CV_FOURCC('X','V','I','D')
+    out = cv2.VideoWriter(filename='/home/kunal/project/baselines/trained_models/images/'+file_name+'.avi', apiPreference=0, fourcc=fourcc, fps=float(fps), frameSize=size)
+    # out = FFmpegWriter(filename='/home/kunal/project/baselines/trained_models/images/'+file_name+'.mp4')
+
+    for frame in img_array:
+        out.write(frame)
+        # out.write(np.random.randint(0, 255, (width, height, layers)).astype('uint8'))
+    out.release()
+    print('Saved video to ' + '~/project/baselines/trained_models/images/'+file_name+'.avi')

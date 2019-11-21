@@ -8,6 +8,7 @@ import gym
 from nes_py.wrappers import JoypadSpace
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
+from Contra.actions import RIGHT_ONLY as CONTRA_SIMPLE
 
 
 class StochasticFrameSkip(gym.Wrapper):
@@ -207,6 +208,9 @@ def make_retro(*, game, state=None, max_episode_steps=4500, **kwargs):
     if "SuperMarioBros" in game:
         env = gym_super_mario_bros.make(game)
         env = JoypadSpace(env, SIMPLE_MOVEMENT)
+    elif "Contra" in game:
+        env = gym.make('Contra-v0')
+        env = JoypadSpace(env, CONTRA_SIMPLE)
     else:
         import retro
         if state is None:
